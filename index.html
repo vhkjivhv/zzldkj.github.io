@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作者的灵感空间</title>
+    <style>
+        /* 基础重置 */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ================= 页面切换动画基础类 ================= */
+        .page {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .page.hidden {
+            opacity: 0;
+            transform: translateY(-50px) scale(0.95);
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+        }
+
+        /* ================= 第一页样式 ================= */
+        .container {
+            background-color: #ffffff;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .link-section {
+            margin-bottom: 40px;
+            font-size: 18px;
+            color: #555;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .link-section a, .deepseek-section a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 20px;
+            word-break: break-all;
+            transition: color 0.3s;
+        }
+
+        .link-section a:hover, .deepseek-section a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+        .image-section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        .image-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        #blockBtn { background-color: #ff4d4f; color: white; }
+        #blockBtn:hover { background-color: #d9363e; transform: translateY(-2px); }
+
+        #reportBtn { background-color: #faad14; color: white; }
+        #reportBtn:hover { background-color: #d48806; transform: translateY(-2px); }
+
+        .author-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px dashed #eee;
+            flex-wrap: wrap;
+        }
+
+        .author-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #faad14;
+            box-shadow: 0 4px 10px rgba(250, 173, 20, 0.3);
+        }
+
+        .author-info { text-align: left; }
+        .author-name { font-size: 20px; font-weight: bold; color: #333; margin: 0 0 8px 0; }
+        .author-desc { font-size: 16px; color: #666; margin: 0; }
+
+        .deepseek-section {
+            margin-top: 40px;
+            padding: 30px 20px;
+            border-top: 2px dashed #eee;
+            text-align: center;
+            background-color: #fdfdfd;
+            border-radius: 8px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .deepseek-desc { font-size: 16px; color: #666; margin-bottom: 10px; }
+
+        /* ================= 翻页按钮组样式 ================= */
+        .page-nav-container {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background-color: #333;
+            color: white;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .nav-btn:hover {
+            background-color: #555;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* ================= 第二页样式 ================= */
+        #page2 {
+            display: block;
+            padding: 40px 20px;
+            min-height: 90vh;
+        }
+
+        .message-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            text-align: center;
+            margin: 0 auto;
+            max-width: 650px;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .message-card h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+
+        .message-card p {
+            font-size: 18px;
+            color: #555;
+            line-height: 2;
+            text-align: left;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .highlight {
+            color: #faad14;
+            font-weight: bold;
+        }
+
+        /* ================= 视频链接区域样式 ================= */
+        .video-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px dashed #ccc;
+            text-align: left;
+        }
+
+        .video-section h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .video-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .video-item {
+            display: block;
+            background-color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            word-break: break-all;
+        }
+
+        .video-item:hover {
+            background-color: #fff9e6;
+            border-color: #faad14;
+            transform: translateX(10px);
+            box-shadow: 0 4px 12px rgba(250, 173, 20, 0.15);
+            color: #d48806;
+        }
+
+        .video-item span {
+            color: #faad14;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* 文字淡入延迟动画 */
+        .fade-up-text {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+        /* 当第二页激活时触发动画 */
+        #page2:not(.hidden) .fade-up-text:nth-child(1) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
+        #page2:not(.hidden) .fade-up-text:nth-child(2) { transition-delay: 0.5s; opacity: 1; transform: translateY(0); }
+        #page2:not(.hidden) .fade-up-text:nth-child(3) { transition-delay: 0.7s; opacity: 1; transform: translateY(0); }
+        #page2:not(.hidden) .fade-up-text:nth-child(4) { transition-delay: 0.9s; opacity: 1; transform: translateY(0); }
+        #page2:not(.hidden) .fade-up-text:nth-child(5) { transition-delay: 1.1s; opacity: 1; transform: translateY(0); }
+        #page2:not(.hidden) .fade-up-text:nth-child(6) { transition-delay: 1.3s; opacity: 1; transform: translateY(0); }
+
+        /* ================= 底部标语 ================= */
+        .footer-slogan {
+            margin-top: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #888;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= 第一页 ================= -->
+    <div class="page" id="page1">
+        <div class="container">
+            <h1>作者的灵感空间</h1>
+
+            <div class="link-section">
+                作者的反虐待网站：<br><br>
+                <a href="http://127.0.0.1:8080/index.html" target="_blank">http://127.0.0.1:8080/index.html</a>
+            </div>
+
+            <div class="image-section">
+                <!-- 记得把正义图片命名为 image.png -->
+                <img src="image.png" alt="正义图片" id="justiceImage">
+                <div class="image-title">正义图片</div>
+            </div>
+
+            <div class="button-group">
+                <button id="blockBtn">拉黑</button>
+                <button id="reportBtn">举报</button>
+            </div>
+
+            <div class="author-section">
+                <!-- 记得把头像命名为 avatar.png -->
+                <img src="avatar.png" alt="作者头像" class="author-avatar">
+                <div class="author-info">
+                    <p class="author-name">我其实根本没有名字</p>
+                    <p class="author-desc">反反白子的灵感空间</p>
+                </div>
+            </div>
+
+            <div class="deepseek-section">
+                <p class="deepseek-desc">作者的主页链接为：</p>
+                <a href="https://jimeng.jianying.com/s/ZdxZfh4wWqs/?t=-1" target="_blank">https://jimeng.jianying.com/s/ZdxZfh4wWqs/?t=-1</a>
+            </div>
+            
+            <!-- 翻页按钮区域（移除了灰色上一面按钮） -->
+            <div class="page-nav-container">
+                <button class="nav-btn" id="goNextBtn">点击下一面</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 第二页 ================= -->
+    <div class="page hidden" id="page2">
+        <div class="message-card">
+            <h2 class="fade-up-text">欢迎来到作者的东西</h2>
+            <p class="fade-up-text">
+                最近好久没有制作 <span class="highlight">HTML 网页</span> 了，所以我最近一直在即梦更新反虐作品，但是被一群人骂。
+            </p>
+            <p class="fade-up-text">
+                如果你打开了这个网页，你可以在我的主页上评论哦。
+            </p>
+            
+            <!-- 视频链接区域 -->
+            <div class="video-section fade-up-text">
+                <h3>作者做的一些反虐视频</h3>
+                <div class="video-list">
+                    <a href="https://jimeng.jianying.com/s/HQpltExOOyU/?t=8011" target="_blank" class="video-item"><span>01</span> https://jimeng.jianying.com/s/HQpltExOOyU/?t=8011</a>
+                    <a href="https://jimeng.jianying.com/s/HafdVH2F0F8/?t=8011" target="_blank" class="video-item"><span>02</span> https://jimeng.jianying.com/s/HafdVH2F0F8/?t=8011</a>
+                    <a href="https://jimeng.jianying.com/s/EHvBd00LkaE/?t=8011" target="_blank" class="video-item"><span>03</span> https://jimeng.jianying.com/s/EHvBd00LkaE/?t=8011</a>
+                    <a href="https://jimeng.jianying.com/s/xVvx5cjgJwo/?t=8011" target="_blank" class="video-item"><span>04</span> https://jimeng.jianying.com/s/xVvx5cjgJwo/?t=8011</a>
+                    <a href="https://jimeng.jianying.com/s/8x_QSByh14E/?t=8011" target="_blank" class="video-item"><span>05</span> https://jimeng.jianying.com/s/8x_QSByh14E/?t=8011</a>
+                    <a href="https://jimeng.jianying.com/s/ezb-hevVWi0/?t=8011" target="_blank" class="video-item"><span>06</span> https://jimeng.jianying.com/s/ezb-hevVWi0/?t=8011</a>
+                    <a href="https://jimeng.jianying.com/s/m39SI_8z8qg/?t=8011" target="_blank" class="video-item"><span>07</span> https://jimeng.jianying.com/s/m39SI_8z8qg/?t=8011</a>
+                </div>
+            </div>
+
+            <!-- 底部标语 -->
+            <div class="footer-slogan fade-up-text">
+                关注作者，作者会做更多的网页
+            </div>
+
+            <!-- 翻页按钮区域（保留第二页的上一面按钮） -->
+            <div class="page-nav-container fade-up-text" style="margin-top: 30px;">
+                <button class="nav-btn" id="goBackBtn">上一面</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 交互逻辑 -->
+    <script>
+        // 基础按钮逻辑
+        document.getElementById('blockBtn').addEventListener('click', function() {
+            alert('不好意思，拉黑是假的');
+        });
+
+        document.getElementById('reportBtn').addEventListener('click', function() {
+            alert('不好意思，举报是假的');
+        });
+
+        // ================= 页面切换逻辑 =================
+        const page1 = document.getElementById('page1');
+        const page2 = document.getElementById('page2');
+        const goNextBtn = document.getElementById('goNextBtn');
+        const goBackBtn = document.getElementById('goBackBtn');
+
+        // 点击去第二页
+        goNextBtn.addEventListener('click', function() {
+            page1.classList.add('hidden');
+            setTimeout(() => {
+                page2.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 300); 
+        });
+
+        // 点击返回第一页 (点击上一面)
+        goBackBtn.addEventListener('click', function() {
+            page2.classList.add('hidden');
+            setTimeout(() => {
+                page1.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 300);
+        });
+    </script>
+
+</body>
+</html>
